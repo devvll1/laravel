@@ -3,6 +3,8 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\Gender;
 use Illuminate\Database\Seeder;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -21,17 +23,17 @@ class DatabaseSeeder extends Seeder
         //      'email' => 'test@example.com',
         //  ]);
 
-        // \App\Models\Gender::factory()->create([
-        //     'gender' => 'Male'
-        //  ]);
+        Gender::factory()->create([
+            'gender' => 'Male',
+        ]);
 
-        //  \App\Models\Gender::factory()->create([
-        //     'gender' => 'Female'
-        //  ]);
+        Gender::factory()->create([
+            'gender' => 'Female',
+        ]);
 
-        //  \App\Models\User::factory(100)->create();
+        User::factory(40)->create();
 
-         User::create([
+        User::factory()->create([
             'first_name' => 'John',
             'middle_name' => 'Doe',
             'last_name' => 'Smith',
@@ -42,7 +44,7 @@ class DatabaseSeeder extends Seeder
             'contact_number' => '1234567890',
             'email' => 'john.doe@example.com',
             'username' => 'admin',
-            'password' => Hash::make('1234'),
+            'password' => bcrypt('admin'),
         ]);
     }
 }

@@ -15,6 +15,7 @@ class User extends Authenticatable
    protected $table ='users';
    protected $primaryKey = 'user_id';
    protected $fillable =[
+    'user_image',
     'first_name',
     'middle_name',
     'last_name',
@@ -25,7 +26,7 @@ class User extends Authenticatable
     'contact_number',
     'email',
     'username',
-    'password'
+    'password',
    ];
    
    protected $hidden = [

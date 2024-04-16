@@ -24,7 +24,7 @@ class UserFactory extends Factory
             'contact_number' => fake()->phoneNumber(),
             'email' => fake()->unique()->safeEmail(),
             'username' => fake()->userName(),
-            'password' => static::$password ??= Hash::make('password'),
+            'password' => bcrypt('123'),
         ];
     }
 }

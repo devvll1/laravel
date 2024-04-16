@@ -6,9 +6,7 @@ use Illuminate\Support\Facades\Hash;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Gender;
-
-
-
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -46,33 +44,31 @@ class UserController extends Controller
 
     public function store(Request $request)
     {
-        $validatedData = $request->validate([
-            'first_name' => ['required', 'max:255'],
-            'middle_name' => ['nullable', 'max:255'],
-            'last_name' => ['required', 'max:255'],
-            'suffix_name' => ['nullable', 'max:255'],
+        $validated = $request->validate([
+            'first_name' => ['required', 'max:55'],
+            'middle_name' => ['nullable', 'max:55'],
+            'last_name' => ['required', 'max:55'],
+            'suffix_name' => ['nullable', 'max:10'],
             'birth_date' => ['required', 'date'],
-            'gender_id' => ['required', 'exists:genders,id'], // Ensure gender_id exists in the 'genders' table
-            'address' => ['required', 'max:255'],
-            'contact_number' => ['required'],
-            'email' => ['required', 'email', 'max:255', 'unique:users'],
-            'username' => ['required', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed'], // Increased minimum password length to 8
-        ],[
-            'gender_id.required' => 'Please select a gender.',
-            'gender_id.exists' => 'Please select a valid gender.', // Error message for invalid gender_id
+            'gender_id' => ['required'],
+            'address' => ['required', 'max:55'],
+            'contact_number' => ['required', 'numeric'],
+            'email' => ['required', 'email'],
+            'username' => ['required', 'max:12', Rule::unique('users', 'username')],
+            'password' => ['required', 'max:15'],
+            'password_confirmation' => ['required'],
+        ], [
+            'gender_id.required' => 'The gender field is required.'
         ]);
 
-        return dd($request);
+        // return dd($validated);
 
-        // $validatedData['password'] = bcrypt($validatedData['password']);
+        $validated['password'] = bcrypt($validated['password']);
 
-        // User::create($validatedData);
+        User::create($validated);
 
-        // return redirect()->route('/users')->with('success', 'User added successfully.');
+        return redirect()->route('users.index')->with('success', 'User successfully added.');
     }
-    
-    
 
     public function show($id)
     {

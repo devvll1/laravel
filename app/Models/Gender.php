@@ -11,15 +11,8 @@ class Gender extends Model
 
    protected $table ='genders';
    protected $primaryKey = 'gender_id';
-   protected $fillable =[
-    'gender'
+   protected $fillable = [
+    'gender',
    ];
-
-public function create()
-{
-    $genders = Gender::all();
-    return view('user.create', compact('genders'));
-}
-
 }
 
