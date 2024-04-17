@@ -29,7 +29,7 @@ class UserController extends Controller
             });
         }
     
-        $users = $usersQuery->paginate(9); // Paginate the results
+        $users = $usersQuery->paginate(12); // Paginate the results
         $users->appends(['search' => $search]); // Append the search query to the pagination links
         return view('users.index', compact('users'));
     }
@@ -83,9 +83,9 @@ class UserController extends Controller
     {
         // Find the user by ID
         $user = User::findOrFail($id);
-
+        $genders = Gender::all();
         // Return the view with the user data
-        return view('users.edit', compact('user'));
+        return view('users.edit', compact('user', 'genders'));
     }
 
     public function update(Request $request, $id)
@@ -95,9 +95,16 @@ class UserController extends Controller
 
         // Validate the incoming request data
         $request->validate([
-            'first_name' => 'required',
-            'last_name' => 'required',
-            // Add validation rules for other fields
+            'first_name' => ['required', 'max:55'],
+            'middle_name' => ['nullable', 'max:55'],
+            'last_name' => ['required', 'max:55'],
+            'suffix_name' => ['nullable', 'max:10'],
+            'birth_date' => ['required', 'date'],
+            'gender_id' => ['required'],
+            'address' => ['required', 'max:55'],
+            'contact_number' => ['required', 'numeric'],
+            'email' => ['required', 'email'],
+            'username' => ['required', 'max:12', Rule::unique('users', 'username')],
         ]);
 
         // Update the user with the new data
@@ -133,6 +140,8 @@ class UserController extends Controller
          if($user && Hash::check($validated['password'], $user->password) && auth()->attempt($validated)) {
             auth()->login($user);
             $request->session()->regenerate();
+
+            $this->setUserSession($user);
             return redirect('/users');
          }
          else {
@@ -140,8 +149,35 @@ class UserController extends Controller
             return redirect()->back()->with('error', 'Invalid username or password');
         }
     }
+
+    public function setUserSession($user) {
+        // Set full name of current user
+        $myFullName = "";
+    
+        if (empty($user->middle_name)) {
+            $myFullName = $user->first_name . ' ' . $user->last_name;
+        } else {
+            $myFullName = $user->first_name . ' ' . $user->middle_name[0] . '. ' . $user->last_name;
+        }
+    
+        // Provide variables for every field of user and set session of user
+        $data = [
+            'user_id' => $user->user_id,
+            'first_name' => $user->first_name,
+            'middle_name' => $user->middle_name,
+            'last_name' => $user->last_name, 
+            'age' => $user->age,
+            'email' => $user->email,
+            'password' => $user->password,
+            'myFullName' => $myFullName,
+            'isLoggedIn' => true
+        ];
+    
+        session($data);
+    }
+    
         public function logout(Request $request) {
-            auth()->logout();
+            Auth()->logout();
 
             $request->session()->invalidate();
             $request->session()->regenerateToken();

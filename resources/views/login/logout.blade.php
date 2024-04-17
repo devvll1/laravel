@@ -30,7 +30,7 @@
                         </a>
                         <a href="{{ url()->previous() }}" class="btn btn-secondary">No, Go Back</a>
                     </div>
-                    <form id="logout-form" action="{{ route('logout') }}" method="POST" class="d-none">
+                    <form id="logout-form" action="{{ route('logout') }}" method="post" class="d-none">
                         @csrf
                     </form>
                 </div>
