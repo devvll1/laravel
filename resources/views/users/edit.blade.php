@@ -14,6 +14,12 @@
                 <hr>
                 <div class="row g-3">
                     <!-- Personal Information -->
+                    
+                    <div class="col-md-6">
+                        <label for="photo" class="form-label">Photo</label>
+                        <input type="file" class="form-control" id="photo" name="photo" accept="image/*" />
+                        @error('photo') <p class="text-danger">{{ $message }}</p> @enderror
+                    </div>
                     <div class="col-md-6">
                         <label for="first_name" class="form-label">First Name</label>
                         <input type="text" class="form-control" id="first_name" name="first_name" value="{{ old('first_name', $user->first_name) }}" />

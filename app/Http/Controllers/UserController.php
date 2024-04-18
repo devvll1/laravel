@@ -3,10 +3,12 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\storage;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Gender;
 use Illuminate\Validation\Rule;
+use Illuminate\Http\UploadedFile;
 
 class UserController extends Controller
 {
@@ -56,12 +58,20 @@ class UserController extends Controller
             'email' => ['required', 'email'],
             'username' => ['required', 'max:12', Rule::unique('users', 'username')],
             'password' => ['required', 'max:15'],
+            'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
             'password_confirmation' => ['required'],
         ], [
             'gender_id.required' => 'The gender field is required.'
         ]);
-
-        // return dd($validated);
+        if($request->hasFile('photo')) {
+            $filenameWithExtension = $request->file('photo');
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            $filenameToStore = $filename . '' . time() . '' . $extension;
+            $request->file('photo')->storeAs('public/img/user', $filenameToStore);
+    
+            $validated['photo'] = $filenameToStore;
+        }
 
         $validated['password'] = bcrypt($validated['password']);
 
@@ -104,8 +114,23 @@ class UserController extends Controller
             'address' => ['required', 'max:55'],
             'contact_number' => ['required', 'numeric'],
             'email' => ['required', 'email'],
-            'username' => ['required', 'max:12', Rule::unique('users', 'username')],
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
+            'username' => ['required', 'max:12', Rule::unique('users', 'username')->ignore($id, 'user_id')],
         ]);
+
+        if ($request->hasFile('photo')) {
+            $filenameWithExtension = $request->file('photo');
+        
+            // Generate a unique filename
+            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
+            $extension = $request->file('photo')->getClientOriginalExtension();
+            $filenameToStore = $filename . '_' . time() . '.' . $extension;
+            $request->file('photo')->storeAs('public/img/user',$filenameToStore);
+        
+            // Set the filename to the validated data
+            $validated['photo'] = $filenameToStore;
+        }
+        
 
         // Update the user with the new data
         $user->update($request->all());
@@ -113,9 +138,9 @@ class UserController extends Controller
         // Redirect back with a success message
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
-
     public function destroy($id)
     {
+        
         // Find the user by ID and delete it
         $user = User::findOrFail($id);
         $user->delete();
@@ -192,5 +217,5 @@ class UserController extends Controller
 
             return redirect('/');
 
-        }
+        }  
 }
