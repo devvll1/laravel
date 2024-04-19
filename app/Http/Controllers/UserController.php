@@ -31,7 +31,7 @@ class UserController extends Controller
             });
         }
     
-        $users = $usersQuery->paginate(12); // Paginate the results
+        $users = $usersQuery->paginate(6); // Paginate the results
         $users->appends(['search' => $search]); // Append the search query to the pagination links
         return view('users.index', compact('users'));
     }
@@ -58,7 +58,7 @@ class UserController extends Controller
             'email' => ['required', 'email'],
             'username' => ['required', 'max:12', Rule::unique('users', 'username')],
             'password' => ['required', 'max:15'],
-            'photo' => 'image|mimes:jpeg,png,jpg,gif|max:2048',
+            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             'password_confirmation' => ['required'],
         ], [
             'gender_id.required' => 'The gender field is required.'
@@ -102,9 +102,9 @@ class UserController extends Controller
     {
         // Find the user by ID
         $user = User::findOrFail($id);
-
+    
         // Validate the incoming request data
-        $request->validate([
+        $validatedData = $request->validate([
             'first_name' => ['required', 'max:55'],
             'middle_name' => ['nullable', 'max:55'],
             'last_name' => ['required', 'max:55'],
@@ -117,37 +117,47 @@ class UserController extends Controller
             'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
             'username' => ['required', 'max:12', Rule::unique('users', 'username')->ignore($id, 'user_id')],
         ]);
-
+    
+        // Update the photo if a new photo is uploaded
         if ($request->hasFile('photo')) {
             $filenameWithExtension = $request->file('photo');
-        
-            // Generate a unique filename
-            $filename = pathinfo($filenameWithExtension, PATHINFO_FILENAME);
-            $extension = $request->file('photo')->getClientOriginalExtension();
+            $filename = pathinfo($filenameWithExtension->getClientOriginalName(), PATHINFO_FILENAME);
+            $extension = $filenameWithExtension->getClientOriginalExtension();
             $filenameToStore = $filename . '_' . time() . '.' . $extension;
-            $request->file('photo')->storeAs('public/img/user',$filenameToStore);
+            $request->file('photo')->storeAs('public/img/user', $filenameToStore);
         
-            // Set the filename to the validated data
-            $validated['photo'] = $filenameToStore;
+            // Delete the old photo if exists
+            if ($user->photo && Storage::exists('public/img/user/' . $user->photo)) {
+                Storage::delete('public/img/user/' . $user->photo);
+            }
+    
+            // Update the photo column in the database with the new filename
+            $user->photo = $filenameToStore;
         }
-        
-
+    
         // Update the user with the new data
-        $user->update($request->all());
-
+        $user->update($validatedData);
+    
         // Redirect back with a success message
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
+    
     public function destroy($id)
     {
-        
-        // Find the user by ID and delete it
+        // Find the user by ID
         $user = User::findOrFail($id);
+    
+        // Delete the user's image if it exists
+        if ($user->photo && Storage::exists('public/img/user/' . $user->photo)) {
+            Storage::delete('public/img/user/' . $user->photo);
+        }
+        // Delete the user
         $user->delete();
-
+    
         // Redirect back with a success message
         return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
+    
 
     public function login() {
         return view('login.login');

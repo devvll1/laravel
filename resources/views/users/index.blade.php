@@ -43,7 +43,7 @@
                                     <td>
                                         <img src="{{ ($user->photo) ? asset('storage/img/user/' . $user->photo) : 'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_960_720.png' }}"
                                                 class="img-fluid" width="70" height="78" />
-                                    </td>                                    
+                                    </td>                                  
                                     <td class="align-middle" style="font-size: 0.9rem;">{{ $user->first_name }} {{ $user->last_name }}</td>
                                     <td class="align-middle" style="font-size: 0.9rem;">{{ $user->middle_name }}</td>
                                     <td class="align-middle" style="font-size: 0.9rem;">{{ $user->suffix_name }}</td>

@@ -6,7 +6,7 @@
     <div class="row justify-content-center">
         @include('include.sidebar')
         <div class="col-md-10 mt-3">
-            <form method="POST" action="{{ route('users.update', ['id' => $user->user_id]) }}">
+            <form method="POST" action="{{ route('users.update', ['id' => $user->user_id]) }}" enctype="multipart/form-data">
                 @csrf
                 @method('PUT')
 
@@ -17,7 +17,7 @@
                     
                     <div class="col-md-6">
                         <label for="photo" class="form-label">Photo</label>
-                        <input type="file" class="form-control" id="photo" name="photo" accept="image/*" />
+                        <input type="file" class="form-control" id="photo" name="photo" />
                         @error('photo') <p class="text-danger">{{ $message }}</p> @enderror
                     </div>
                     <div class="col-md-6">

@@ -8,14 +8,14 @@
         <div class="col-md-9">
             <div class="container">
                 <h1>Add User</h1>
-                <form action="{{ route('users.store') }}" method="post" class="needs-validation">
+                <form action="{{ route('users.store') }}" method="post" class="needs-validation" enctype="multipart/form-data">
                     @csrf
                     <div class="row g-3">
                         <!-- Personal Information -->
                         
                         <div class="col-md-6">
                             <label for="photo" class="form-label">Photo</label>
-                            <input type="file" class="form-control" id="photo" name="photo" accept="image/*" />
+                            <input type="file" class="form-control" id="photo" name="photo" />
                             @error('photo') <p class="text-danger">{{ $message }}</p> @enderror
                         </div>
 
