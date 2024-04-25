@@ -1,8 +1,9 @@
 @extends('layout.main')
 
 @section('content')
-
-<div class="container">
+@include('include.sidebar')
+<div class="container col-md-10 mb-3">
+    
     <h1>Gender List</h1>
 
     <table class="table">
@@ -10,17 +11,18 @@
             <tr>
                 <th scope="col">ID</th>
                 <th scope="col">Gender</th>
+                <th scope="col">Actions</th>
             </tr>
         </thead>
         <tbody>
-            @foreach($users as $user)
+            @foreach($genders as $gender)
             <tr>
-                <td>{{ $genders->gender_id }}</td>
-                <td>{{ $genders->gender }}</td>
+                <td>{{ $gender->gender_id }}</td>
+                <td>{{ $gender->gender }}</td>
 
                 <td>
-                    <a href="{{ route('gender.show', $genders->gender_id) }}" class="btn btn-primary">View</a>
-                    <form action="{{ route('gender.destroy', $user->user_id) }}" method="POST" style="display: inline-block;">
+                    <a href="{{ route('genders.show', $gender->gender_id) }}" class="btn btn-primary">View</a>
+                    <form action="{{ route('genders.destroy', $gender->gender_id) }}" method="POST" style="display: inline-block;">
                         @csrf
                         @method('DELETE')
                         <button type="submit" class="btn btn-danger">Delete</button>

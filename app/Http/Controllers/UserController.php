@@ -77,7 +77,7 @@ class UserController extends Controller
 
         User::create($validated);
 
-        return redirect()->route('users.index')->with('success', 'User successfully added.');
+        return redirect()->route('users.index')->with('message_success', 'User successfully added.');
     }
 
     public function show($id)
@@ -114,7 +114,6 @@ class UserController extends Controller
             'address' => ['required', 'max:55'],
             'contact_number' => ['required', 'numeric'],
             'email' => ['required', 'email'],
-            'photo' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', 
             'username' => ['required', 'max:12', Rule::unique('users', 'username')->ignore($id, 'user_id')],
         ]);
     
@@ -123,40 +122,29 @@ class UserController extends Controller
             $filenameWithExtension = $request->file('photo');
             $filename = pathinfo($filenameWithExtension->getClientOriginalName(), PATHINFO_FILENAME);
             $extension = $filenameWithExtension->getClientOriginalExtension();
-            $filenameToStore = $filename . '_' . time() . '.' . $extension;
+            
+            // Generate a unique filename
+            $filenameToStore = $filename . '' . time() . '' . $extension;
+            
+            // Store the uploaded file to the desired directory
             $request->file('photo')->storeAs('public/img/user', $filenameToStore);
-        
-            // Delete the old photo if exists
+            
+            // Delete the old photo if it exists
             if ($user->photo && Storage::exists('public/img/user/' . $user->photo)) {
                 Storage::delete('public/img/user/' . $user->photo);
             }
-    
+            
             // Update the photo column in the database with the new filename
             $user->photo = $filenameToStore;
         }
     
         // Update the user with the new data
         $user->update($validatedData);
-    
+        
         // Redirect back with a success message
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        return redirect()->route('users.index')->with('message_success', 'User updated successfully.');
     }
     
-    public function destroy($id)
-    {
-        // Find the user by ID
-        $user = User::findOrFail($id);
-    
-        // Delete the user's image if it exists
-        if ($user->photo && Storage::exists('public/img/user/' . $user->photo)) {
-            Storage::delete('public/img/user/' . $user->photo);
-        }
-        // Delete the user
-        $user->delete();
-    
-        // Redirect back with a success message
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
-    }
     
 
     public function login() {

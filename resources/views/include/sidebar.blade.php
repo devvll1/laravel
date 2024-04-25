@@ -10,9 +10,14 @@
               <ul class="nav nav-pills flex-column mb-sm-auto mb-0 align-items-center align-items-sm-start" id="menu">
                   <li class="nav-item">
                       <a href="{{ route('users.index') }}" class="nav-link align-middle px-0">
-                          <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">LIST</span>
+                          <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">USER LIST</span>
                       </a>
                   </li>
+                  <li class="nav-item">
+                    <a href="{{ route('genders.index') }}" class="nav-link align-middle px-0">
+                        <i class="fs-4 bi-house"></i> <span class="ms-1 d-none d-sm-inline">GENDER LIST</span>
+                    </a>
+                </li>
                   <li>
                       <a href="#submenu1" data-bs-toggle="collapse" class="nav-link px-0 align-middle">
                           <i class="fs-4 bi-speedometer2"></i> <span class="ms-1 d-none d-sm-inline">ADD</span> </a>
@@ -21,7 +26,7 @@
                               <a href="{{ route('users.create') }}" class="nav-link px-0"> <span class="d-none d-sm-inline">User</span></a>
                           </li>
                           <li>
-                              <a href="#" class="nav-link px-0"> <span class="d-none d-sm-inline">Gender</span></a>
+                              <a href="{{ route('genders.create') }}" class="nav-link px-0"> <span class="d-none d-sm-inline">Gender</span></a>
                           </li>
                       </ul>
                   </li>

@@ -10,25 +10,25 @@ class GenderController extends Controller
     public function index()
     {
         $genders = Gender::all();
-        return view('gender.index', compact('genders'));
+        return view('genders.index', compact('genders'));
     }
 
     public function show($id)
     {
         $gender = Gender::findOrFail($id);
-        return view('gender.show', compact('gender'));
+        return view('genders.show', compact('gender'));
     }
 
     public function create()
     {
-        return view('gender.create');
+        return view('genders.create');
     }
 
     public function store(Request $request)
     {
         // Validation can be added here if necessary
         Gender::create($request->all());
-        return redirect()->route('gender.index')->with('success', 'Gender created successfully.');
+        return redirect()->route('genders.index')->with('success', 'Gender created successfully.');
     }
 
     public function edit($id)
@@ -42,13 +42,13 @@ class GenderController extends Controller
         // Validation can be added here if necessary
         $gender = Gender::findOrFail($id);
         $gender->update($request->all());
-        return redirect()->route('gender.index')->with('success', 'Gender updated successfully.');
+        return redirect()->route('genders.index')->with('success', 'Gender updated successfully.');
     }
 
     public function destroy($id)
     {
         $gender = Gender::findOrFail($id);
         $gender->delete();
-        return redirect()->route('gender.index')->with('success', 'Gender deleted successfully.');
+        return redirect()->route('genders.index')->with('success', 'Gender deleted successfully.');
     }
 }

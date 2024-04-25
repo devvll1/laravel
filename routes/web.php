@@ -14,12 +14,16 @@ Route::controller(UserController::class)->group(function () {
     Route::post('/logout', 'logout')->name('logout');
 });
 
-Route::group(['middleware' => 'auth'], function() {
-    Route::controller(GenderController::class)->group(function () {
-        Route::get('/genders', [GenderController::class, 'index'])->name('genders.index');
-        Route::get('/genders/{id}', [GenderController::class, 'show'])->name('genders.show');
-        Route::delete('/genders/{id}', [GenderController::class, 'destroy'])->name('genders.destroy');
-    });
+Route::controller(GenderController::class)->group(function () {
+    Route::get('/genders', [GenderController::class, 'index'])->name('genders.index');
+    Route::get('/genders/create', [GenderController::class, 'create'])->name('genders.create');
+    Route::post('/genders/store', [GenderController::class, 'store'])->name('genders.store');
+    Route::get('/genders/{id}', [GenderController::class, 'show'])->name('genders.show');
+    // Route::get('/genders/{id}', [GenderController::class, 'show'])->name('genders.show');
+    // Route::get('/genders/{id}/edit', [GenderController::class, 'edit'])->name('genders.edit');
+    // Route::put('/genders/{id}', [GenderController::class, 'update'])->name('genders.update');
+    Route::delete('/genders/{id}', [GenderController::class, 'destroy'])->name('genders.destroy');
+
     
     Route::controller(UserController::class)->group(function () {
         Route::get('/users', [UserController::class, 'index'])->name('users.index');
